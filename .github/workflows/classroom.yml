@@ -1,0 +1,265 @@
+name: Autograding Tests
+"on":
+  - push
+  - repository_dispatch
+permissions:
+  checks: write
+  actions: read
+  contents: read
+jobs:
+  run-autograding-tests:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-classroom[bot]'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Setup runs once instead of once per test. The original workflow used the
+      # io-grader's `setup-command` on every test, rebuilding the lab 20 times.
+      # Built without -m32: the runner has no gcc-multilib, and int/unsigned are
+      # 32-bit on x86-64 anyway.
+      - name: Setup
+        run: |
+          chmod +x dlc check_ops.py
+          make clean
+          make all CFLAGS='-O -Wall -fwrapv'
+
+      # Every problem is graded by combining its own operator/operand rule check
+      # with its correctness test. A problem that uses illegal syntax or exceeds
+      # its operator limit fails on its own and scores 0 for that problem only;
+      # there is no separate global operator-check score. The scored total is
+      # therefore exactly the lab's 110 correctness points.
+
+      - name: signMask
+        id: signmask
+        env:
+          TEST_NAME: signMask
+          GRADER_COMMAND: "./check_ops.py --function signMask bits.c && ./btest -f signMask"
+          EXPECTED_OUTPUT: "Total points: 1/1"
+          COMPARISON_METHOD: contains
+          TIMEOUT_MINUTES: "10"
+          MAX_SCORE: "1"
+        run: bash .github/scripts/autograde.sh
+
+      - name: bitXor
+        id: bitxor
+        env:
+          TEST_NAME: bitXor
+          GRADER_COMMAND: "./check_ops.py --function bitXor bits.c && ./btest -f bitXor"
+          EXPECTED_OUTPUT: "Total points: 2/2"
+          COMPARISON_METHOD: contains
+          TIMEOUT_MINUTES: "10"
+          MAX_SCORE: "2"
+        run: bash .github/scripts/autograde.sh
+
+      - name: negativePart
+        id: negativepart
+        env:
+          TEST_NAME: negativePart
+          GRADER_COMMAND: "./check_ops.py --function negativePart bits.c && ./btest -f negativePart"
+          EXPECTED_OUTPUT: "Total points: 3/3"
+          COMPARISON_METHOD: contains
+          TIMEOUT_MINUTES: "10"
+          MAX_SCORE: "3"
+        run: bash .github/scripts/autograde.sh
+
+      - name: copyByteWithin
+        id: copybytewithin
+        env:
+          TEST_NAME: copyByteWithin
+          GRADER_COMMAND: "./check_ops.py --function copyByteWithin bits.c && ./btest -f copyByteWithin"
+          EXPECTED_OUTPUT: "Total points: 4/4"
+          COMPARISON_METHOD: contains
+          TIMEOUT_MINUTES: "10"
+          MAX_SCORE: "4"
+        run: bash .github/scripts/autograde.sh
+
+      - name: logicalShift
+        id: logicalshift
+        env:
+          TEST_NAME: logicalShift
+          GRADER_COMMAND: "./check_ops.py --function logicalShift bits.c && ./btest -f logicalShift"
+          EXPECTED_OUTPUT: "Total points: 4/4"
+          COMPARISON_METHOD: contains
+          TIMEOUT_MINUTES: "10"
+          MAX_SCORE: "4"
+        run: bash .github/scripts/autograde.sh
+
+      - name: swapNibblePairs
+        id: swapnibblepairs
+        env:
+          TEST_NAME: swapNibblePairs
+          GRADER_COMMAND: "./check_ops.py --function swapNibblePairs bits.c && ./btest -f swapNibblePairs"
+          EXPECTED_OUTPUT: "Total points: 4/4"
+          COMPARISON_METHOD: contains
+          TIMEOUT_MINUTES: "10"
+          MAX_SCORE: "4"
+        run: bash .github/scripts/autograde.sh
+
+      - name: secondLowestZeroBit
+        id: secondlowestzerobit
+        env:
+          TEST_NAME: secondLowestZeroBit
+          GRADER_COMMAND: "./check_ops.py --function secondLowestZeroBit bits.c && ./btest -f secondLowestZeroBit"
+          EXPECTED_OUTPUT: "Total points: 4/4"
+          COMPARISON_METHOD: contains
+          TIMEOUT_MINUTES: "10"
+          MAX_SCORE: "4"
+        run: bash .github/scripts/autograde.sh
+
+      - name: oddParity
+        id: oddparity
+        env:
+          TEST_NAME: oddParity
+          GRADER_COMMAND: "./check_ops.py --function oddParity bits.c && ./btest -f oddParity"
+          EXPECTED_OUTPUT: "Total points: 5/5"
+          COMPARISON_METHOD: contains
+          TIMEOUT_MINUTES: "10"
+          MAX_SCORE: "5"
+        run: bash .github/scripts/autograde.sh
+
+      - name: rotateRightBits
+        id: rotaterightbits
+        env:
+          TEST_NAME: rotateRightBits
+          GRADER_COMMAND: "./check_ops.py --function rotateRightBits bits.c && ./btest -f rotateRightBits"
+          EXPECTED_OUTPUT: "Total points: 5/5"
+          COMPARISON_METHOD: contains
+          TIMEOUT_MINUTES: "10"
+          MAX_SCORE: "5"
+        run: bash .github/scripts/autograde.sh
+
+      - name: roundEvenPow2
+        id: roundevenpow2
+        env:
+          TEST_NAME: roundEvenPow2
+          GRADER_COMMAND: "./check_ops.py --function roundEvenPow2 bits.c && ./btest -f roundEvenPow2"
+          EXPECTED_OUTPUT: "Total points: 5/5"
+          COMPARISON_METHOD: contains
+          TIMEOUT_MINUTES: "10"
+          MAX_SCORE: "5"
+        run: bash .github/scripts/autograde.sh
+
+      - name: midpointTowardFirst
+        id: midpointtowardfirst
+        env:
+          TEST_NAME: midpointTowardFirst
+          GRADER_COMMAND: "./check_ops.py --function midpointTowardFirst bits.c && ./btest -f midpointTowardFirst"
+          EXPECTED_OUTPUT: "Total points: 5/5"
+          COMPARISON_METHOD: contains
+          TIMEOUT_MINUTES: "10"
+          MAX_SCORE: "5"
+        run: bash .github/scripts/autograde.sh
+
+      - name: isBetweenEitherOrder
+        id: isbetweeneitherorder
+        env:
+          TEST_NAME: isBetweenEitherOrder
+          GRADER_COMMAND: "./check_ops.py --function isBetweenEitherOrder bits.c && ./btest -f isBetweenEitherOrder"
+          EXPECTED_OUTPUT: "Total points: 7/7"
+          COMPARISON_METHOD: contains
+          TIMEOUT_MINUTES: "10"
+          MAX_SCORE: "7"
+        run: bash .github/scripts/autograde.sh
+
+      - name: mul5Sat
+        id: mul5sat
+        env:
+          TEST_NAME: mul5Sat
+          GRADER_COMMAND: "./check_ops.py --function mul5Sat bits.c && ./btest -f mul5Sat"
+          EXPECTED_OUTPUT: "Total points: 7/7"
+          COMPARISON_METHOD: contains
+          TIMEOUT_MINUTES: "10"
+          MAX_SCORE: "7"
+        run: bash .github/scripts/autograde.sh
+
+      - name: classifyAdd3
+        id: classifyadd3
+        env:
+          TEST_NAME: classifyAdd3
+          GRADER_COMMAND: "./check_ops.py --function classifyAdd3 bits.c && ./btest -f classifyAdd3"
+          EXPECTED_OUTPUT: "Total points: 7/7"
+          COMPARISON_METHOD: contains
+          TIMEOUT_MINUTES: "10"
+          MAX_SCORE: "7"
+        run: bash .github/scripts/autograde.sh
+
+      - name: floatScaleThreeHalves
+        id: floatscalethreehalves
+        env:
+          TEST_NAME: floatScaleThreeHalves
+          GRADER_COMMAND: "./check_ops.py --function floatScaleThreeHalves bits.c && ./btest -f floatScaleThreeHalves"
+          EXPECTED_OUTPUT: "Total points: 7/7"
+          COMPARISON_METHOD: contains
+          TIMEOUT_MINUTES: "10"
+          MAX_SCORE: "7"
+        run: bash .github/scripts/autograde.sh
+
+      - name: floatRoundEven
+        id: floatroundeven
+        env:
+          TEST_NAME: floatRoundEven
+          GRADER_COMMAND: "./check_ops.py --function floatRoundEven bits.c && ./btest -f floatRoundEven"
+          EXPECTED_OUTPUT: "Total points: 10/10"
+          COMPARISON_METHOD: contains
+          TIMEOUT_MINUTES: "10"
+          MAX_SCORE: "10"
+        run: bash .github/scripts/autograde.sh
+
+      - name: float_i2f
+        id: float_i2f
+        env:
+          TEST_NAME: float_i2f
+          GRADER_COMMAND: "./check_ops.py --function float_i2f bits.c && ./btest -f float_i2f"
+          EXPECTED_OUTPUT: "Total points: 10/10"
+          COMPARISON_METHOD: contains
+          TIMEOUT_MINUTES: "10"
+          MAX_SCORE: "10"
+        run: bash .github/scripts/autograde.sh
+
+      - name: bitCount
+        id: bitcount
+        env:
+          TEST_NAME: bitCount
+          GRADER_COMMAND: "./check_ops.py --function bitCount bits.c && ./btest -f bitCount"
+          EXPECTED_OUTPUT: "Total points: 10/10"
+          COMPARISON_METHOD: contains
+          TIMEOUT_MINUTES: "10"
+          MAX_SCORE: "10"
+        run: bash .github/scripts/autograde.sh
+
+      - name: bitReverse
+        id: bitreverse
+        env:
+          TEST_NAME: bitReverse
+          GRADER_COMMAND: "./check_ops.py --function bitReverse bits.c && ./btest -f bitReverse"
+          EXPECTED_OUTPUT: "Total points: 10/10"
+          COMPARISON_METHOD: contains
+          TIMEOUT_MINUTES: "10"
+          MAX_SCORE: "10"
+        run: bash .github/scripts/autograde.sh
+
+      - name: Autograding Reporter
+        uses: classroom-resources/autograding-grading-reporter@v1
+        env:
+          SIGNMASK_RESULTS: "${{steps.signmask.outputs.result}}"
+          BITXOR_RESULTS: "${{steps.bitxor.outputs.result}}"
+          COPYBYTEWITHIN_RESULTS: "${{steps.copybytewithin.outputs.result}}"
+          ROUNDEVENPOW2_RESULTS: "${{steps.roundevenpow2.outputs.result}}"
+          NEGATIVEPART_RESULTS: "${{steps.negativepart.outputs.result}}"
+          ISBETWEENEITHERORDER_RESULTS: "${{steps.isbetweeneitherorder.outputs.result}}"
+          LOGICALSHIFT_RESULTS: "${{steps.logicalshift.outputs.result}}"
+          SWAPNIBBLEPAIRS_RESULTS: "${{steps.swapnibblepairs.outputs.result}}"
+          SECONDLOWESTZEROBIT_RESULTS: "${{steps.secondlowestzerobit.outputs.result}}"
+          ROTATERIGHTBITS_RESULTS: "${{steps.rotaterightbits.outputs.result}}"
+          MIDPOINTTOWARDFIRST_RESULTS: "${{steps.midpointtowardfirst.outputs.result}}"
+          CLASSIFYADD3_RESULTS: "${{steps.classifyadd3.outputs.result}}"
+          MUL5SAT_RESULTS: "${{steps.mul5sat.outputs.result}}"
+          FLOATROUNDEVEN_RESULTS: "${{steps.floatroundeven.outputs.result}}"
+          FLOATSCALETHREEHALVES_RESULTS: "${{steps.floatscalethreehalves.outputs.result}}"
+          FLOAT_I2F_RESULTS: "${{steps.float_i2f.outputs.result}}"
+          ODDPARITY_RESULTS: "${{steps.oddparity.outputs.result}}"
+          BITCOUNT_RESULTS: "${{steps.bitcount.outputs.result}}"
+          BITREVERSE_RESULTS: "${{steps.bitreverse.outputs.result}}"
+        with:
+          runners: signmask,bitxor,negativepart,copybytewithin,logicalshift,swapnibblepairs,secondlowestzerobit,oddparity,rotaterightbits,roundevenpow2,midpointtowardfirst,isbetweeneitherorder,mul5sat,classifyadd3,floatscalethreehalves,floatroundeven,float_i2f,bitcount,bitreverse
